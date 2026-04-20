@@ -90,7 +90,7 @@ export function TaskCard ({task, editMethod, startMethod, deleteMethod, editedTi
 
         
         
-            <div className="relative flex flex-col gap-4 border-2 p-6 rounded-xl border-gray-300">
+            <div className={`relative flex flex-col gap-4 border-2 p-6 rounded-xl ${task.priority === "High" ? "border-red-400" : "border-gray-300" }`}>
                 <p 
                 onClick={() => handleDelete(task)}
                 className="absolute top-1 right-2 text-lg cursor-pointer">x</p>

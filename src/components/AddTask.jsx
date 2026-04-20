@@ -13,7 +13,7 @@ export function AddTask ({addMethod}) {
             setFailure(true);
         } else {
         const newTask = {
-            id: Date.now(),
+         
             createdOn: new Date().toLocaleDateString("en-CA"),
             order: Date.now(),
             status: "ToDo",
@@ -51,7 +51,7 @@ export function AddTask ({addMethod}) {
                     <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
-                    className="border border-gray-300 p-2 rounded-xl"
+                    className="border border-gray-300 p-2 rounded-xl cursor-pointer"
                     >
                         <option defaultValue>Select task priority</option>
                         <option value={`Low`}>Low</option>

@@ -20,7 +20,8 @@ export function Column ({status, tasks, editMethod, deleteMethod, editedTitle, s
                         <SortableContext strategy={verticalListSortingStrategy}
                         items={tasks[status].map(task => task.id)}
                         >
-                        {tasks[status].map((task => (
+                        {
+                        tasks[status].map((task => (
                             <SortableItem key={task.id} task={task}>
                           
                                 <TaskCard task={task} editMethod={editMethod} deleteMethod={deleteMethod} editedTitle={editedTitle} setEditedTitle={setEditedTitle} editedDescription={editedDescription} setEditedDescription={setEditedDescription} editedPriority={editedPriority} setEditedPriority={setEditedPriority}/>
