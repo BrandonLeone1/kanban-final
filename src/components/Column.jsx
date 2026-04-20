@@ -11,12 +11,13 @@ export function Column ({status, tasks, editMethod, deleteMethod, editedTitle, s
                         
                         {tasks[status].length < 1 ? (
                     
-                        <p className="text-center">No {status} tasks</p>
+                        <p className="text-center text-xl font-medium">No {status} tasks</p>
                     
                 ) : (
                         
                         <>
-                        <h2 className="mb-6 text-center">{status} Tasks: ({tasks[status].length})</h2>
+                        
+                        <h2 className="mb-6 text-center text-xl font-medium">{status} Tasks: ({tasks[status].length})</h2>
                         <SortableContext strategy={verticalListSortingStrategy}
                         items={tasks[status].map(task => task.id)}
                         >

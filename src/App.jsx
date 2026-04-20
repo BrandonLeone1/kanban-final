@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react'
 import { AddTask } from './components/AddTask'
-import {DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors} from '@dnd-kit/core'
-import { arrayMove } from '@dnd-kit/sortable'
+import {DndContext, DragOverlay, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors} from '@dnd-kit/core'
+import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { Column } from './components/Column'
 import {auth, db} from './services/Firebase'
 import { SignIn } from './components/SignIn'
 import { onAuthStateChanged } from 'firebase/auth'
-import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, where, QuerySnapshot } from "firebase/firestore"; 
+import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, writeBatch } from "firebase/firestore"; 
 import { Loading } from './components/Loading'
+import { TaskCard } from './components/TaskCard'
+import { SignOut } from './components/SignOut'
 
 function App() {
 
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [activeTask, setActiveTask] = useState(null)
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -145,23 +147,25 @@ console.log(user)
 async function updateTasksInDb(updatedTasks) {
   if (!user) {return} 
   
-  const updates = updatedTasks.map(task => {
+  const batch = writeBatch(db);
+
+  updatedTasks.forEach(task => {
     const docRef = doc(db, "users", user.uid, "tasks", task.id);
 
-    return updateDoc(docRef, {
+    batch.update(docRef, {
       status: task.status,
       order: task.order
     })
   })
 
-  await Promise.all(updates)
+  await batch.commit();
 }   
 
  async function handleDragEnd (event) {
     const {active, over} = event;
 
     if (!active.id || !over) {return}
-
+    setActiveTask(null)
     let activeStatus = active.data.current.status
     let overStatus = over.data.current.status
     let activeColumn = [...tasks[activeStatus]]
@@ -230,31 +234,66 @@ async function updateTasksInDb(updatedTasks) {
 
 
   const sensors = useSensors(
-    useSensor(KeyboardSensor),
+    useSensor(KeyboardSensor, {
+    coordinateGetter: sortableKeyboardCoordinates,
+  }),
     useSensor(TouchSensor),
     useSensor(MouseSensor)
   )
 
- if (isLoading) {
-  return <Loading />
- }
+  function handleDragStart (event) {
+    
+    const {active} = event
+    
+    const status = active.data.current.status 
 
+    const task = tasks[status].find(task => task.id === active.id)
 
+    setActiveTask(task)
+  }
   return (
     <>
 
-      { !user && (
-        <SignIn />
-      ) 
-
-      }
+      <header className='border-b-2 p-6 font-[manrope]'>
+        <div className='flex gap-6 flex-wrap justify-between w-375 mx-auto max-w-[90%] items-center'>
+          <h1 className='text-3xl font-semibold text-center'>Task Tracker</h1>
+          
+          { user ? (
+          <div className='flex gap-2 items-center flex-wrap'>
+            <p className='text-xl font-medium'>User: {user.displayName}</p>
+            <SignOut />
+          </div>
+          ) : (
+            <SignIn />
+          )
+        }
+        </div>
+      </header>
       <AddTask addMethod={addMethod} />
       
-      <main className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 w-350 mx-auto max-w-[90%]'>
-      <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
+      <main className='font-[manrope] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 w-350 mx-auto max-w-[90%]'>
+      <DndContext onDragEnd={handleDragEnd} sensors={sensors} onDragStart={handleDragStart}>
       <Column status={"ToDo"} tasks={tasks} editMethod={editMethod} deleteMethod={deleteMethod} editedTitle={editedTitle} editedDescription={editedDescription} editedPriority={editedPriority} setEditedTitle={setEditedTitle} setEditedDescription={setEditedDescription} setEditedPriority={setEditedPriority}/>
       <Column status={"Started"} tasks={tasks} editMethod={editMethod} deleteMethod={deleteMethod} editedTitle={editedTitle} editedDescription={editedDescription} editedPriority={editedPriority} setEditedTitle={setEditedTitle} setEditedDescription={setEditedDescription} setEditedPriority={setEditedPriority}/>
       <Column status={"Finished"} tasks={tasks} editMethod={editMethod} deleteMethod={deleteMethod} editedTitle={editedTitle} editedDescription={editedDescription} editedPriority={editedPriority} setEditedTitle={setEditedTitle} setEditedDescription={setEditedDescription} setEditedPriority={setEditedPriority}/>
+      
+      <DragOverlay dropAnimation={null}>
+        { activeTask ? (
+          <TaskCard task={activeTask}
+        editMethod={editMethod}
+        deleteMethod={deleteMethod}
+        editedTitle={editedTitle}
+        setEditedTitle={setEditedTitle}
+        editedDescription={editedDescription}
+        setEditedDescription={setEditedDescription}
+        editedPriority={editedPriority}
+        setEditedPriority={setEditedPriority}
+        isOverlay/>
+        ) : null
+
+        }
+      </DragOverlay>
+      
       </DndContext>
       </main>
     </>

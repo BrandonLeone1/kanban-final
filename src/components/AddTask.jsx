@@ -33,8 +33,10 @@ export function AddTask ({addMethod}) {
 
     return (
         <>
-            <div className="flex w-300 mx-auto max-w-[90%] justify-center mt-12">
+            <div className="flex w-300 mx-auto max-w-[90%] justify-center mt-12 font-[manrope]">
                 <div className="flex flex-col gap-4">
+                    
+                    <p className="text-xl font-medium text-center">Add a task</p>
                     <input 
                     type="text"
                     placeholder="Enter task title..."
@@ -60,19 +62,19 @@ export function AddTask ({addMethod}) {
                     </select>
 
                     <button onClick={handleClick}
-                    className="border border-gray-300 p-2 rounded-xl cursor-pointer w-fit mx-auto hover:bg-gray-100 duration-300"
+                    className="border text-sm font-medium border-gray-300 p-2 rounded-xl cursor-pointer w-fit mx-auto hover:bg-blue-500 hover:text-white duration-300"
                     >Add task</button>
                 </div>
 
                 { failure && (
                     <div 
                     onClick={() => setFailure(false)}
-                    className="fixed inset-0 bg-black/75 flex justify-center items-center">
+                    className="fixed inset-0 bg-black/75 flex justify-center items-center z-9999">
                         <div 
                         onClick={(e) => e.stopPropagation()}
                         className="bg-gray-100 h-fit w-fit flex flex-col gap-4 p-6 rounded-xl">
                             <p>You must fill out all fields in order to add a task!</p>
-                            <button onClick={() => setFailure(false)} className="block mx-auto w-fit h-fit underline hover:text-olive-500 duration-300 cursor-pointer">Close</button>
+                            <button onClick={() => setFailure(false)} className="block mx-auto w-fit h-fit underline hover:text-blue-500 duration-300 cursor-pointer">Close</button>
                         </div>
                     </div>
                 )

@@ -14,8 +14,8 @@ export function DroppableContainer ({id, status, children}) {
         <>
         <div
       ref={setNodeRef}
-      className={`border-2 rounded-xl p-6 flex flex-col gap-4 transition ${
-        isOver ? "bg-gray-200" : "border-gray-400"
+      className={` ${status === "ToDo" ? "border-t-4 border-blue-400!" : ""} ${status === "Started" ? "border-t-4 border-yellow-400!" : ""} ${status === "Finished" ? "border-t-4 border-green-400!" : ""} p-6 flex flex-col gap-4 transition ${
+        isOver ? "bg-gray-200" : ""
       }`}
       >
       {children}

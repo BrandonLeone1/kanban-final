@@ -17,7 +17,7 @@ export function SortableItem ({task, children}) {
         <>
         <div ref={setNodeRef} style={style}>
             
-            <div {...listeners} {...attributes} className='text-lg text-center cursor-pointer'>
+            <div {...listeners} {...attributes} className='text-xl hover:scale-110 w-fit mx-auto duration-150 text-center cursor-pointer'>
                 ≡
             </div>
 
