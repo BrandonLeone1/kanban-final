@@ -7,7 +7,6 @@ import {auth, db} from './services/Firebase'
 import { SignIn } from './components/SignIn'
 import { onAuthStateChanged } from 'firebase/auth'
 import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, writeBatch } from "firebase/firestore"; 
-import { Loading } from './components/Loading'
 import { TaskCard } from './components/TaskCard'
 import { SignOut } from './components/SignOut'
 
@@ -30,8 +29,6 @@ function App() {
   }, []
 
 )
-
-console.log(user)
 
   const [tasks, setTasks] = useState({
     ToDo: [],
@@ -88,11 +85,6 @@ console.log(user)
   console.log(e)
 }
     
-  /*
-    setTasks(prev => ( {
-      ...prev,
-      ToDo: [...prev["ToDo"], taskToAdd]
-    })) */
   }
 
   async function deleteMethod (taskToDelete) {
@@ -104,11 +96,6 @@ console.log(user)
     } catch (e) {
       console.log(e)
     }
-   /*
-    setTasks(prev => ({
-      ...prev,
-      [taskToDelete.status]: prev[taskToDelete.status].filter(task => task.id !== taskToDelete.id)
-    })) */
   }
 
  async function editMethod (editedTask) {
@@ -130,17 +117,7 @@ console.log(user)
 } catch (e) {
   console.log(e)
 }
-  /*
-  setTasks(prev => ({
-      ...prev,
-      [editedTask.status]: prev[editedTask.status].map(task => {
-        if (task.id === editedTask.id) {
-          return editedTask
-        } else {
-          return task
-        }
-      })
-    })) */
+
   }
 
 
@@ -186,10 +163,7 @@ async function updateTasksInDb(updatedTasks) {
 
       await updateTasksInDb(updatedArray)
 
-    /*  setTasks(prev => ({
-        ...prev,
-        [activeStatus]: updatedArray
-      })) */
+
     } else {
       let taskToChange = tasks[activeStatus].find(task => task.id === active.id)
       let activeArray = [...tasks[activeStatus]]
@@ -223,11 +197,6 @@ async function updateTasksInDb(updatedTasks) {
       }));
 
       await updateTasksInDb([...updatedActive, ...updatedOver]);
-     /* setTasks(prev => ({
-        ...prev,
-        [activeStatus]: activeArray,
-        [overStatus]: overArray
-      })) */
       
     }
   }
